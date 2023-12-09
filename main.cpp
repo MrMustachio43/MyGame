@@ -765,5 +765,7 @@ int main() {
 		main();
 	}
 
+	cout << "yippy";
+
 	return 0;
 };
