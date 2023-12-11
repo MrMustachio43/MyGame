@@ -10,6 +10,13 @@ void innitWorldArray() {
 		worldMapDupe[i] = new int[worldMapWidth];
 		worldTreeMap[i] = new int[worldMapWidth];
 	};
+
+	for (int iters = 0; iters < worldMapHeight * worldMapWidth; iters++) {
+		int h = iters / worldMapWidth;
+		int w = iters - (h * worldMapWidth);
+
+		worldTreeMap[h][w] = 0;
+	}
 };
 
 void mapNoiseGenerator(int density) { // Density = percent of 1's (alive cells)
@@ -320,8 +327,8 @@ void generateTrees(int numTrees) {
 
 			for (int j = w - 1; j <= w + 1; j++) {
 
-				if (j == -1) { k = w; }
-				if ((j == w + 1) && (w + 1 > worldMapWidth)) { break; }
+				if (j == -1) { j = w; }
+				if (j == w + 1 > worldMapWidth) { break; }
 
 				if (worldTreeMap[k][j] == t1) {
 					worldTreeMap[h][w] = t1;
