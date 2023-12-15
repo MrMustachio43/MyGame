@@ -255,7 +255,7 @@ int main() {
 		//CloseWindow();
 	};
 
-	if (gameState == stateNewGame || gameState == stateLoaded) { // 1 represents a new game, 2 represents loading a game
+	if (gameState == stateNewGame || gameState == stateLoad) { // 1 represents a new game, 2 represents loading a game
 
 		// ----- worldMap Textures -----
 		Texture2D grassTexture1 = LoadTexture("./Images/grassPlain.png");
@@ -300,8 +300,6 @@ int main() {
 			player = P;
 		}
 
-		player->set_playerPos(worldMapWidth / 2, worldMapHeight / 2);
-
 		if (gameState == stateLoaded) {
 			int num = 0;
 			ifstream playerAtrributes(saveGamePlayerAttributes);
@@ -333,9 +331,9 @@ int main() {
 		float frameUpdate = 1.0 / 14.0;  // Frame delay
 		float frameRun = 0.0;
 
-		float screenHeightBoundary = 0;
-		float screenHeightBoundaryBottom = worldMapHeight * 16;
-		float screenWidthBoundary = screenWidth / 2;
+		float screenHeightBoundary = ((screenHeight / 2) - (player->get_fh() * 2)) / cameraZoom;
+		float screenHeightBoundaryBottom = (worldMapHeight * 16) - ((screenHeight / 2) + (player->get_fh() * 2)) / cameraZoom;
+		float screenWidthBoundary = ((screenWidth / 2) - (player->get_fw() * 2)) / cameraZoom;
 		float screenWidthBoundaryRight = (worldMapWidth * 16) - ((screenWidth / 2) + (player->get_fw() * 2)) / cameraZoom;
 
 		bool canMove = true;
@@ -361,6 +359,12 @@ int main() {
 				else {
 					canMove = false;
 				};
+			};
+
+			if (IsKeyPressed(KEY_P)) {
+				int h = (player->get_playerCollisionPos().y / 16); // Position in array
+				int w = (player->get_playerCollisionPos().x / 16);
+				cout << h << " " << w << endl;
 			};
 
 			// ----- Player Movement -----
@@ -470,7 +474,8 @@ int main() {
 				};
 			}
 
-			// Boundary stoppers
+
+			// Boundary stoppers - World Height
 			if (player->get_playerCollisionPos().y <= 0) {
 				player->set_playerPos(0, player->get_playerSpeed());
 				player->set_playerCollisionPos(0, player->get_playerSpeed());
@@ -480,6 +485,7 @@ int main() {
 				player->set_playerCollisionPos(0, -player->get_playerSpeed());
 			}
 
+			// Boundary stoppers - World Width
 			if (player->get_playerCollisionPos().x <= 0) {
 				player->set_playerPos(player->get_playerSpeed(), 0);
 				player->set_playerCollisionPos(player->get_playerSpeed(), 0);
@@ -489,9 +495,11 @@ int main() {
 				player->set_playerCollisionPos(-player->get_playerSpeed(), 0);
 			}
 
-			// ----------End of Player Movement-------------
+			// ---------- End of Player Movement -------------
 			// 
 			// ----- Camera Boundary -----
+
+			//Corners
 			if (player->get_playerPos().y < screenHeightBoundary && player->get_playerPos().x > screenWidthBoundaryRight) {
 				camera.target = Vector2{ screenWidthBoundaryRight , screenHeightBoundary };
 			}
@@ -505,6 +513,8 @@ int main() {
 				camera.target = Vector2{ screenWidthBoundary , screenHeightBoundaryBottom };
 			}
 
+
+			// Sides
 			else if (player->get_playerPos().y < screenHeightBoundary) {
 				camera.target = Vector2{ player->get_playerPos().x, screenHeightBoundary };
 			}
@@ -545,10 +555,10 @@ int main() {
 				BeginDrawing();
 				BeginMode2D(camera);
 
-				int hIndexStart = (player->get_playerPos().y / 16) - 8;
+				int hIndexStart = (player->get_playerPos().y / 16) - (((GetMonitorHeight(0) / 16) / 2) / 2);
 				if (hIndexStart < 0) { hIndexStart = 0; }
 
-				int hIndexEnd = hIndexStart + 22;
+				int hIndexEnd = hIndexStart + ((GetMonitorHeight(0) / 16) / 2);
 				if (hIndexEnd > worldMapHeight) { hIndexEnd = worldMapHeight; }
 
 				int wIndexStart = (player->get_playerPos().x / 16) - (((GetMonitorWidth(0) / 16) / 2) / 2);
