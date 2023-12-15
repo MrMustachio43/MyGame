@@ -71,6 +71,24 @@ void displayMap() {
 			if (worldMap[h][w] == gP || worldMap[h][w] == gG || worldMap[h][w] == gF) {
 				cout << ".";
 			}
+			else if (worldMap[h][w] == wHT || worldMap[h][w] == -wHT) {
+				cout << wHT;
+			}
+			else if (worldMap[h][w] == wH || worldMap[h][w] == -wH) {
+				cout << wH;
+			}
+			else if (worldMap[h][w] == wV || worldMap[h][w] == -wV) {
+				cout << wV;
+			}
+			else if (worldMap[h][w] == wBU || worldMap[h][w] == -wBU) {
+				cout << wBU;
+			}
+			else if (worldMap[h][w] == wBA || worldMap[h][w] == -wBA) {
+				cout << wBA;
+			}
+			else if (worldMap[h][w] == wIJ || worldMap[h][w] == -wIJ) {
+				cout << wIJ;
+			}
 			else {
 				cout << worldMap[h][w];
 			}
@@ -86,8 +104,11 @@ void displayTreeMap() {
 			if (worldTreeMap[h][w] == 0) {
 				cout << ".";
 			}
+			else if(worldTreeMap[h][w] == t1){
+				cout << "|";
+			}
 			else {
-				cout << worldTreeMap[h][w];
+				cout << "#";
 			}
 		};
 		cout << "\n";

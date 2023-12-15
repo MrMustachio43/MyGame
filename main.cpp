@@ -252,15 +252,9 @@ int main() {
 
 			EndDrawing();
 		};
-		CloseWindow();
+		//CloseWindow();
 	};
 
-	if (gameState == stateLoad) {
-		UnloadTexture(menuBackground);
-		UnloadTexture(titleBackground);
-		UnloadTexture(title);
-		loadGameMenu();
-	};
 	if (gameState == stateNewGame || gameState == stateLoaded) { // 1 represents a new game, 2 represents loading a game
 
 		// ----- worldMap Textures -----
@@ -295,6 +289,10 @@ int main() {
 		if (gameState == stateNewGame) {
 			generateWorldMap();
 		}
+
+		if (gameState == stateLoad) {
+			loadGameMenu();
+		};
 
 		// ----- Player Initilization -----
 		Player* player; {
@@ -335,9 +333,9 @@ int main() {
 		float frameUpdate = 1.0 / 14.0;  // Frame delay
 		float frameRun = 0.0;
 
-		float screenHeightBoundary = ((screenHeight / 2) - (player->get_fh() * 2)) / cameraZoom;
-		float screenHeightBoundaryBottom = (worldMapHeight * 16) - ((screenHeight / 2) + (player->get_fh() * 2)) / cameraZoom;
-		float screenWidthBoundary = ((screenWidth / 2) - (player->get_fw() * 2)) / cameraZoom;
+		float screenHeightBoundary = 0;
+		float screenHeightBoundaryBottom = worldMapHeight * 16;
+		float screenWidthBoundary = screenWidth / 2;
 		float screenWidthBoundaryRight = (worldMapWidth * 16) - ((screenWidth / 2) + (player->get_fw() * 2)) / cameraZoom;
 
 		bool canMove = true;
@@ -530,10 +528,6 @@ int main() {
 			if (pauseCount % 2 == 1) {
 				BeginDrawing();
 
-				Texture2D title = LoadTexture("./Images/title.png");
-				Texture2D menuBackground = LoadTexture("./Images/menuBackground.png");
-				Texture2D titleBackground = LoadTexture("./Images/titleBackground.png");
-
 				DrawTexture(menuBackground, 696, 168, WHITE);
 				DrawTextureEx(title, { 768, 225 }, 0, 1.02, BLACK);
 				DrawTexture(title, 770, 225, WHITE);
@@ -662,19 +656,25 @@ int main() {
 				int h = (player->get_playerCollisionPos().y / 16); // Position in array
 				int w = (player->get_playerCollisionPos().x / 16);
 
-
+				// Colliding >
 				if ((isWall(h, w) || worldTreeMap[h][w] == 2) && (player->get_playerDirection() == 'U' || player->get_playerDirection() == 'R' || player->get_playerDirection() == 'L')) {
 					player->set_playerPos(0, player->get_playerSpeed());
 					player->set_playerCollisionPos(0, player->get_playerSpeed());
 				}
+
+				// Colliding V
 				if ((isWall(h + 1, w) || worldTreeMap[h + 1][w] == 2) && player->get_playerCollisionPos().y >= ((h * 16) + 12)) {
 					player->set_playerPos(0, -player->get_playerSpeed());
 					player->set_playerCollisionPos(0, -player->get_playerSpeed());
 				}
+
+				// Colliding >
 				if ((isWall(h, w + 1) || worldTreeMap[h][w + 1] == 2) && player->get_playerCollisionPos().x >= ((w * 16) + 12)) {
 					player->set_playerPos(-player->get_playerSpeed(), 0);
 					player->set_playerCollisionPos(-player->get_playerSpeed(), 0);
 				}
+
+				// Colliding <
 				if ((isWall(h, w - 1) || worldTreeMap[h][w - 1] == 2) && player->get_playerCollisionPos().x <= w * 16) {
 					player->set_playerPos(player->get_playerSpeed(), 0);
 					player->set_playerCollisionPos(player->get_playerSpeed(), 0);
